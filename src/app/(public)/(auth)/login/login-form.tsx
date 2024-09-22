@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { handleErrorApi } from '@/lib/utils'
 import { useLoginMutation } from '@/queries/useAuth'
 import { toast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 export default function LoginForm() {
   const loginMutation = useLoginMutation()
   const form = useForm<LoginBodyType>({
@@ -20,6 +21,8 @@ export default function LoginForm() {
     },
   })
 
+  const router = useRouter()
+
   const onSubmit = async (data: LoginBodyType) => {
     //When the submit button is clicked, React Hook Form will validate the form using the Zod schema on the client side first. If it doesn't pass this validation, the API will not be called.
     if (loginMutation.isPending) return
@@ -28,6 +31,7 @@ export default function LoginForm() {
       toast({
         description: result.payload.message,
       })
+      router.push('/manage/dashboard')
     } catch (error: any) {
       handleErrorApi({
         error,
