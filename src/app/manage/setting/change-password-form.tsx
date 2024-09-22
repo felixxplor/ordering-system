@@ -67,7 +67,7 @@ export default function ChangePasswordForm() {
               />
               <div className=" items-center gap-2 md:ml-auto flex">
                 <Button variant="outline" size="sm">
-                  Hủy
+                  Cancel
                 </Button>
                 <Button size="sm">Save</Button>
               </div>
