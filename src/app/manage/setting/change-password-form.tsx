@@ -7,7 +7,11 @@ import { useForm } from 'react-hook-form'
 import { ChangePasswordBody, ChangePasswordBodyType } from '@/schemaValidations/account.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
+import { useChangePasswordMutation } from '@/queries/useAccount'
+import { handleErrorApi } from '@/lib/utils'
+import { toast } from '@/hooks/use-toast'
 export default function ChangePasswordForm() {
+  const changePasswordMutation = useChangePasswordMutation()
   const form = useForm<ChangePasswordBodyType>({
     resolver: zodResolver(ChangePasswordBody),
     defaultValues: {
@@ -16,9 +20,33 @@ export default function ChangePasswordForm() {
       confirmPassword: '',
     },
   })
+
+  const onSubmit = async (data: ChangePasswordBodyType) => {
+    if (changePasswordMutation.isPending) return
+    try {
+      const result = await changePasswordMutation.mutateAsync(data)
+      toast({
+        description: result.payload.message,
+      })
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError,
+      })
+    }
+  }
+  const reset = () => {
+    form.reset()
+  }
+
   return (
     <Form {...form}>
-      <form noValidate className="grid auto-rows-max items-start gap-4 md:gap-8">
+      <form
+        noValidate
+        className="grid auto-rows-max items-start gap-4 md:gap-8"
+        onSubmit={form.handleSubmit(onSubmit)}
+        onReset={reset}
+      >
         <Card className="overflow-hidden" x-chunk="dashboard-07-chunk-4">
           <CardHeader>
             <CardTitle>Change password</CardTitle>
@@ -33,7 +61,13 @@ export default function ChangePasswordForm() {
                   <FormItem>
                     <div className="grid gap-3">
                       <Label htmlFor="oldPassword">Old password</Label>
-                      <Input id="oldPassword" type="password" className="w-full" {...field} />
+                      <Input
+                        autoComplete="current-password"
+                        id="oldPassword"
+                        type="password"
+                        className="w-full"
+                        {...field}
+                      />
                       <FormMessage />
                     </div>
                   </FormItem>
@@ -46,7 +80,13 @@ export default function ChangePasswordForm() {
                   <FormItem>
                     <div className="grid gap-3">
                       <Label htmlFor="password">New password</Label>
-                      <Input id="password" type="password" className="w-full" {...field} />
+                      <Input
+                        autoComplete="new-password"
+                        id="password"
+                        type="password"
+                        className="w-full"
+                        {...field}
+                      />
                       <FormMessage />
                     </div>
                   </FormItem>
@@ -59,17 +99,25 @@ export default function ChangePasswordForm() {
                   <FormItem>
                     <div className="grid gap-3">
                       <Label htmlFor="confirmPassword">Confirm your new password</Label>
-                      <Input id="confirmPassword" type="password" className="w-full" {...field} />
+                      <Input
+                        autoComplete="new-password"
+                        id="confirmPassword"
+                        type="password"
+                        className="w-full"
+                        {...field}
+                      />
                       <FormMessage />
                     </div>
                   </FormItem>
                 )}
               />
               <div className=" items-center gap-2 md:ml-auto flex">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" type="reset">
                   Cancel
                 </Button>
-                <Button size="sm">Save</Button>
+                <Button size="sm" type="submit">
+                  Save
+                </Button>
               </div>
             </div>
           </CardContent>
