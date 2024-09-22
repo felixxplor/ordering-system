@@ -1,6 +1,6 @@
 'use client'
+import envConfig from '../config'
 import { useEffect } from 'react'
-import envConfig from '../../config'
 export default function ClientComponent() {
   useEffect(() => {
     console.log(envConfig)
