@@ -1,6 +1,6 @@
 'use client'
 
-import { getAccessTokenFromLocalStorage } from '@/lib/utils'
+import { useAppContext } from '@/components/app-provider'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -31,10 +31,7 @@ const menuItems = [
 // But right after that, the client renders Menu, Orders, Management because it has checked the login status
 
 export default function NavItems({ className }: { className?: string }) {
-  const [isAuth, setIsAuth] = useState(false)
-  useEffect(() => {
-    setIsAuth(Boolean(getAccessTokenFromLocalStorage()))
-  }, [])
+  const { isAuth } = useAppContext()
   return menuItems.map((item) => {
     if ((item.authRequired === false && isAuth) || (item.authRequired === true && !isAuth))
       return null

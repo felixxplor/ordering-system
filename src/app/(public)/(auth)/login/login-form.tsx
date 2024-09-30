@@ -10,9 +10,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { handleErrorApi } from '@/lib/utils'
 import { useLoginMutation } from '@/queries/useAuth'
 import { toast } from '@/hooks/use-toast'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+import { useAppContext } from '@/components/app-provider'
 export default function LoginForm() {
   const loginMutation = useLoginMutation()
+  const searchParams = useSearchParams()
+  const clearTokens = searchParams.get('clearTokens')
+  const { setIsAuth } = useAppContext()
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -22,6 +27,11 @@ export default function LoginForm() {
   })
 
   const router = useRouter()
+  useEffect(() => {
+    if (clearTokens) {
+      setIsAuth(false)
+    }
+  }, [clearTokens, setIsAuth])
 
   const onSubmit = async (data: LoginBodyType) => {
     //When the submit button is clicked, React Hook Form will validate the form using the Zod schema on the client side first. If it doesn't pass this validation, the API will not be called.

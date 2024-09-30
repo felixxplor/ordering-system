@@ -10,7 +10,9 @@ export function middleware(request: NextRequest) {
   const refreshToken = request.cookies.get('refreshToken')?.value
   // If not logged in, access to private paths is not allowed
   if (privatePaths.some((path) => pathname.startsWith(path)) && !refreshToken) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    const url = new URL('/login', request.url)
+    url.searchParams.set('clearTokens', 'true')
+    return NextResponse.redirect(url)
   }
   // Once logged in, access to the login page will no longer be allowed
   if (unAuthPaths.some((path) => pathname.startsWith(path)) && refreshToken) {
