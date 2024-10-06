@@ -50,6 +50,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
+import { useGetAccountList } from '@/queries/useAccount'
 
 type AccountItem = AccountListResType['data'][0]
 
@@ -84,7 +85,7 @@ export const columns: ColumnDef<AccountType>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'Tên',
+    header: 'Name',
     cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>,
   },
   {
@@ -100,7 +101,6 @@ export const columns: ColumnDef<AccountType>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
   },
   {
     id: 'actions',
@@ -152,9 +152,9 @@ function AlertDialogDeleteAccount({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete staff?</AlertDialogTitle>
+          <AlertDialogTitle>Delete staff account?</AlertDialogTitle>
           <AlertDialogDescription>
-            Staff account{' '}
+            Account{' '}
             <span className="bg-foreground text-primary-foreground rounded px-1">
               {employeeDelete?.name}
             </span>{' '}
@@ -178,7 +178,8 @@ export default function AccountTable() {
   // const params = Object.fromEntries(searchParam.entries())
   const [employeeIdEdit, setEmployeeIdEdit] = useState<number | undefined>()
   const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(null)
-  const data: any[] = []
+  const accountListQuery = useGetAccountList()
+  const data = accountListQuery.data?.payload.data ?? []
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -219,7 +220,12 @@ export default function AccountTable() {
 
   return (
     <AccountTableContext.Provider
-      value={{ employeeIdEdit, setEmployeeIdEdit, employeeDelete, setEmployeeDelete }}
+      value={{
+        employeeIdEdit,
+        setEmployeeIdEdit,
+        employeeDelete,
+        setEmployeeDelete,
+      }}
     >
       <div className="w-full">
         <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} onSubmitSuccess={() => {}} />
@@ -278,7 +284,7 @@ export default function AccountTable() {
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="text-xs text-muted-foreground py-4 flex-1 ">
-            Show <strong>{table.getPaginationRowModel().rows.length}</strong> in{' '}
+            Display <strong>{table.getPaginationRowModel().rows.length}</strong> from{' '}
             <strong>{data.length}</strong> results
           </div>
           <div>
