@@ -29,7 +29,7 @@ import { DishStatus, DishStatusValues } from '@/constants/type'
 import { Textarea } from '@/components/ui/textarea'
 import { useUploadMediaMutation } from '@/queries/useMedia'
 import { useGetDishQuery, useUpdateDishMutation } from '@/queries/useDish'
-import { toast } from '@/components/ui/use-toast'
+import { toast } from '@/hooks/use-toast'
 
 export default function EditDish({
   id,
